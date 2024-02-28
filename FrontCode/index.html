@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Interface</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <div class="modal" v-if="showModal">
+            <div class="modal-content">
+                <img src="zhuyi.png" style="max-width: 160px;" alt="注意" class="modal-image">
+                <p>连续上下文为模拟操作，可能回答不准确。</p>
+                <button @click="disableContext" style="height: 30px; width: 120px;">关闭上下文功能</button>
+                <button @click="closeModal" style="height: 30px; width: 120px;">知道啦知道啦</button>
+            </div>
+        </div>        
+
+        <div class="model-selection-container">
+            <label for="modelSelection">选择模型：</label>
+            <select id="modelSelection" v-model="selectedModel">
+                <option value="model-qwen" selected>Qwen-7B-Chat</option>
+                <option value="model-mpt7">MPT-7B</option>
+            </select>
+            <label for="contextSize">上下文长度：</label>
+            <input type="number" id="contextSize" v-model.number="contextLength" min="1" max="10" value="5">
+        </div>
+
+        <div class="chat-container">
+            <div v-for="(message, index) in messages" :key="index"
+            :class="{'message-right': message.type === 'question', 'message-left': message.type === 'answer' || message.type === 'current'}">
+                <div class="message-content">{{ message.text }}</div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" v-model="newQuestion" @keyup.enter="sendQuestion" placeholder="Type a question..." ref="questionInput">
+            <button @click="sendQuestion" :disabled="sending" :class="{ 'button-disabled': sending }">Send</button>
+            <span v-show="sending" class="replying-label"></span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
