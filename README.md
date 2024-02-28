@@ -30,7 +30,7 @@
 [![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvQJS.png)](https://img.tg/image/OyvlLx)
 
 #### 其他小功能1 海创网职位获取
-#### 代码位置 jishianquan-haichuangController
-###### 其他小功能2 微信小程序【冀时安全应急管理宣传教育平台】自动刷题、自动阅读资讯、自动获取积分（已经打包好了软件，具体软件就不透露了，跟着接口自己写写就成了）
-#### 代码位置 jishianquan-jishianquanController
+###### 代码位置 jishianquan-haichuangController
+#### 其他小功能2 微信小程序【冀时安全应急管理宣传教育平台】自动刷题、自动阅读资讯、自动获取积分（已经打包好了软件，具体软件就不透露了，跟着接口自己写写就成了）
+###### 代码位置 jishianquan-jishianquanController
 
