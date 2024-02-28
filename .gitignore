@@ -1,0 +1,50 @@
+################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+# Build and Release Folders
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
+
+# Other files and folders
+.settings/
+
+# Executables
+*.swf
+*.air
+*.ipa
+*.apk
+
+# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
+# should NOT be excluded as they contain compiler settings and other important
+# information for Eclipse / Flash Builder.
+/HRCommunity.NET/.vs
+/HRCommunity.NET/packages
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/wwwroot/Upload
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Core/HRCommunity.NET.Admin.Web.Core.csproj.user
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/HRCommunity.NET.Admin.Entry.csproj.user
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/Properties/PublishProfiles
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/publish
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/logs
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/*.db
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/.config
+/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/Properties/launchSettings.json
+
+# folders
+
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/logs
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/Properties/PublishProfiles/FolderProfile.pubxml.user
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/wwwroot/Upload/User/Avatar
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/Properties/PublishProfiles/FolderProfile.pubxml
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/.config/dotnet-tools.json
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/Properties/PublishProfiles
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/HRCommunity.NET.Entry.csproj.user
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/Properties/PublishProfiles/FolderProfile.pubxml.user
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/Properties/launchSettings.json
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/HRCommunity.NET.Entry.csproj.user
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/Properties/PublishProfiles/FolderProfile1.pubxml.user
+/HRCommunity.NET/HRCommunity.NET.Web.Entry/HRCommunity.NET.Entry.csproj.user
+/HRCommunity.NET/HRCommunity.NET/HRCommunity.NET.Admin.Web.Entry/logs
+/HRCommunity.NET/HRCommunity.NETHRCommunity.NET.Web.Entry/logs
