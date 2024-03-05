@@ -19,6 +19,13 @@ namespace alibaba.Controllers
     public class AiController : ControllerBase
     {
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public AiController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
         public static string AccessToken = "";
         private static DateTime AccessTokenExpiry = DateTime.MinValue;
 
@@ -37,8 +44,9 @@ namespace alibaba.Controllers
             AlibabaCloud.SDK.Dingtalkoauth2_1_0.Client client = CreateClient();
             AlibabaCloud.SDK.Dingtalkoauth2_1_0.Models.GetAccessTokenRequest getAccessTokenRequest = new AlibabaCloud.SDK.Dingtalkoauth2_1_0.Models.GetAccessTokenRequest
             {
-                AppKey = "",//填写你自己的AppKey
-                AppSecret = "",//填写你自己的AppSecret
+                //这里填写AppKey和AppSecret
+                AppKey = "",
+                AppSecret = "",
             };
             try
             {
@@ -75,6 +83,11 @@ namespace alibaba.Controllers
             return new AlibabaCloud.SDK.Dingtalkai_paa_s_1_0.Client(config);
         }
 
+        /// <summary>
+        /// 问答
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         [HttpPost("g")]
         public async Task<Dictionary<string, object>> generate(LiandanluExclusiveModelRequest args)
         {
@@ -122,6 +135,46 @@ namespace alibaba.Controllers
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// 语音转文本
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [HttpPost("speech")]
+        public async Task<IActionResult> recorder(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            // 这里替换为您的appkey和token
+            string appKey = "";
+            string token = "";
+
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+
+            var client = _httpClientFactory.CreateClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, $"http://nls-gateway-cn-shanghai.aliyuncs.com/stream/v1/asr?appkey={appKey}");
+            request.Headers.Add("X-NLS-Token", token);
+
+            request.Content = new ByteArrayContent(memoryStream.ToArray());
+            request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+
+            try
+            {
+                var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                return Ok(new { translatedText = jsonResponse });
+            }
+            catch (HttpRequestException e)
+            {
+                // 异常处理，记录错误日志等
+                return StatusCode(500, e.Message);
+            }
         }
     }
 }

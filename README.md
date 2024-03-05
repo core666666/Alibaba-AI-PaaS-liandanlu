@@ -7,8 +7,8 @@
 | 1 | 接入阿里云AI PaaS平台 | 完成 |
 | 2 | 训练基础知识库并对接模型 | 完成 |
 | 3 | 编写基础的对话页面(VUE) | 完成 |
-| 4 | 支持语音输入功能 | 1% |
-| 5 | 本地存储聊天记录功能 | 0% |
+| 4 | 支持语音输入功能 | 完成 |
+| 5 | 本地存储聊天记录功能 | 1% |
 | 6 | 支持多个会话窗口 | 0% |
 | 7 | 导出聊天记录功能 | 0% |
 | 8 | 登录授权功能 | 0% |
@@ -42,6 +42,18 @@
 
 #### 7.选择其他模型
 [![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvQJS.png)](https://img.tg/image/OyvlLx)
+
+#### 8.对接语音转文本-创建项目（新账户有3个月的免费试用期）
+[智能语音交互链接](https://help.aliyun.com/document_detail/72138.html?spm=a2c4g.119258.0.0.35d91dd8RD7r8V)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyGCHS.png)](https://img.tg/image/OyvlLx)
+
+#### 9.对接语音转文本-获得AccessToken（Token有效期为24h）
+[获取Token链接](https://help.aliyun.com/document_detail/450514.html?spm=a2c4g.113251.0.0.63b24d82mz7R6r)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyGwXN.png)](https://img.tg/image/OyvlLx)
+
+#### 10.对接语音转文本-使用
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyG37a.png)](https://img.tg/image/OyvlLx)
+
 
 #### 其他小功能1 海创网职位获取
 ###### 代码位置 jishianquan-haichuangController

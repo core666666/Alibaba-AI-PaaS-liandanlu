@@ -67,6 +67,10 @@ body {
     background-color: #ccc !important; /* 强制覆盖其他背景色 */
     cursor: not-allowed !important; /* 显示一个“禁止”光标 */
 }
+.input-container button.disabled {
+  background-color: #ccc; /* 置灰的颜色 */
+  cursor: not-allowed;    /* 显示不可点击的鼠标指针 */
+}
   .replying-label {
     display: inline-block;
     padding-left: 15px; /* 或适当的间隙 */
@@ -104,4 +108,21 @@ body {
     text-align: center;
 }
 
+.recordershowModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none; /* 默认隐藏 */
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5em;
+  z-index: 10; /* 确保遮罩层位于其他内容之上 */
+}
 
+button.record-btn {
+  z-index: 20; /* 确保按钮位于遮罩层之上 */
+}
