@@ -3,10 +3,10 @@ new Vue({
     data: {
         newQuestion: '',
         messages: [],
-        selectedModel: 'model-id', // 默认选中 Qwen-7B-Chat 模型
-        contextLength: 5, // 设置默认上下文长度为5
+        selectedModel: 'model-qwen7b', // 默认选中 Qwen-7B-Chat 模型
+        contextLength: 0, // 设置默认上下文长度为5
         sending: false, // 添加一个标志，以禁用Send按钮
-        showModal: true,
+        showModal: false,
         recordershowModal: false,
         recorder: null,
         translatedText: '',
@@ -20,14 +20,16 @@ new Vue({
 
             this.sending = true;
 
-            let historicalQuestions = this.messages.filter(message => message.type === 'question');
-            if (this.contextLength > 0 && historicalQuestions.length > this.contextLength) {
-                historicalQuestions = historicalQuestions.slice(-this.contextLength);
-            }
+            // let historicalQuestions = this.messages.filter(message => message.type === 'question');
+            // if (this.contextLength > 0 && historicalQuestions.length > this.contextLength) {
+            //     historicalQuestions = historicalQuestions.slice(-this.contextLength);
+            // }
 
-            let prompt = "" +
-                historicalQuestions.map(message => message.text).join('；') +
-                "，" + this.newQuestion;
+            // let prompt = "" +
+            //     historicalQuestions.map(message => message.text).join('；') +
+            //     "，" + this.newQuestion;
+
+            let prompt = this.newQuestion;
 
             // Add the question to the messages array
             this.messages.push({ text: this.newQuestion, type: 'question' });
@@ -39,10 +41,8 @@ new Vue({
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    module: this.selectedModel === 'model-id1' ? "Qwen-7B-Chat" :
-                    this.selectedModel === 'model-id2' ? "MPT-7B" : 
-                    "公积金专员",
-                    modelId: this.selectedModel,//"model-qwen7b111chat666-0da7",
+                    module: "module",
+                    modelId: this.selectedModel,//"model-qwen7b",
                     prompt: prompt,
                     userId: "1"
                 })
@@ -197,6 +197,6 @@ new Vue({
     },
     created() {
         // 页面加载完成时，可以决定是否立即显示模态框
-        this.showModal = true;
+        this.showModal = false;
     }
 });

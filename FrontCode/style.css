@@ -2,6 +2,56 @@ body {
     font-family: Arial, sans-serif;
   }
   
+/* 响应式媒体查询 */
+@media (min-width: 768px) { /* 此处768px为示例断点，根据实际需求确定 */
+  .model-selection-container,
+  .chat-container,
+  .input-container {
+    width: 80%;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .input-container input {
+    width: calc(100% - 120px); /* 修正input的宽度，使按钮仍能适配 */
+  }
+
+  .input-container button {
+    width: auto; /* 按钮恢复自动宽度 */
+    padding: 10px 20px; /* 适当增加按钮的padding */
+  }
+}
+
+/* 更大的视口适配 例如桌面屏幕 */
+@media (min-width: 992px) {
+  .input-container {
+    /* 移除display: flex和相关属性 */
+  }
+
+  .input-container input,
+  .input-container button {
+    margin-top: 2px; /* 上边距，使元素不紧贴在一起 */
+    width: auto; /* 取消自动宽度 */
+  }
+
+  .input-container input {
+    width: calc(100% - 10px); /* 减去margin-right的宽度 */
+  }
+
+  .input-container button {
+    padding: 10px 20px; /* 保持padding不变 */
+    font-size: 1rem; /* 保持字体大小不变 */
+  }
+
+  /* 分别设置按钮的宽度，使它们能够并排显示 */
+  .input-container button:nth-of-type(1),
+  .input-container button:nth-of-type(2),
+  .input-container button:nth-of-type(3) {
+    width: 33%; /* 将容器宽度平分给三个按钮 */
+    box-sizing: border-box; /* 包含padding和border在内的总宽度 */
+  }
+}
+
   .model-selection-container {
     width: 80%;
     max-width: 600px;
@@ -12,7 +62,7 @@ body {
     width: 80%;
     max-width: 600px;
     margin: auto;
-    height: 600px;
+    height: 60vh;
     border: 1px solid #ccc;
     overflow-y: auto;
     padding: 10px;
@@ -48,14 +98,14 @@ body {
   }
   
   .input-container input {
-    width: 85%;
+    width: 100%;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
   }
   
   .input-container button {
-    width: 15%;
+    width: 100%;
     padding: 11px;
     font-size: 16px;
     background-color: #4CAF50;

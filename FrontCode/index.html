@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Chat Interface</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -22,12 +23,12 @@
         <div class="model-selection-container">
             <label for="modelSelection">选择模型：</label>
             <select id="modelSelection" v-model="selectedModel">
-                <option value="model-1" selected>公积金专员</option>
-                <option value="model-2">Qwen-7B-Chat</option>
-                <option value="model-3">MPT-7B</option>
+                <option value="model-qwen7b" selected>公积金专员</option>
+                <option value="model-cb12345">Qwen-7B-Chat</option>
+                <option value="model-mpt7b1">MPT-7B</option>
             </select>
-            <label for="contextSize">上下文长度：</label>
-            <input type="number" id="contextSize" v-model.number="contextLength" min="1" max="10" value="5">
+            <del><label for="contextSize">上下文长度：</label></del>
+            <input type="number" id="contextSize" v-model.number="contextLength" min="1" max="10" value="1" readonly>
         </div>
 
         <div class="chat-container">
