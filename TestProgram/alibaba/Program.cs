@@ -1,4 +1,7 @@
+using alibaba.Model;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<AITokenOptions>(builder.Configuration.GetSection("AITokenOptions"));
 
 // Add services to the container.
 

@@ -1,9 +1,16 @@
-﻿using AlibabaCloud.SDK.Dingtalkai_paa_s_1_0.Models;
+﻿using alibaba.Model;
+using AlibabaCloud.SDK.Dingtalkai_paa_s_1_0.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 using Tea;
@@ -18,12 +25,13 @@ namespace alibaba.Controllers
     [ApiController]
     public class AiController : ControllerBase
     {
-
+        private readonly AITokenOptions _aiTokenOptions;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public AiController(IHttpClientFactory httpClientFactory)
+        public AiController(IHttpClientFactory httpClientFactory, IOptions<AITokenOptions> aiTokenOptions)
         {
             _httpClientFactory = httpClientFactory;
+            _aiTokenOptions = aiTokenOptions.Value;
         }
 
         public static string AccessToken = "";
@@ -39,14 +47,13 @@ namespace alibaba.Controllers
         }
 
         [NonAction]
-        public static void getAccessToken()
+        public void getAccessToken()
         {
             AlibabaCloud.SDK.Dingtalkoauth2_1_0.Client client = CreateClient();
             AlibabaCloud.SDK.Dingtalkoauth2_1_0.Models.GetAccessTokenRequest getAccessTokenRequest = new AlibabaCloud.SDK.Dingtalkoauth2_1_0.Models.GetAccessTokenRequest
             {
-                //这里填写AppKey和AppSecret
-                AppKey = "",
-                AppSecret = "",
+                AppKey = _aiTokenOptions.AIAppKey,
+                AppSecret = _aiTokenOptions.AIAppSecret,
             };
             try
             {
@@ -108,7 +115,6 @@ namespace alibaba.Controllers
             try
             {
                 var response = await client.LiandanluExclusiveModelWithOptionsAsync(liandanluExclusiveModelRequest, liandanluExclusiveModelHeaders, new AlibabaCloud.TeaUtil.Models.RuntimeOptions());
-                // 直接返回 response.Body.Result。
                 return response.Body.Result;
             }
             catch (TeaException err)
@@ -149,8 +155,8 @@ namespace alibaba.Controllers
                 return BadRequest("No file uploaded.");
 
             // 这里替换为您的appkey和token
-            string appKey = "";
-            string token = "";
+            string appKey = _aiTokenOptions.appKey;
+            string token = GetIntelligentSpeechTokenAsync().Result.token;
 
             using var memoryStream = new MemoryStream();
             await file.CopyToAsync(memoryStream);
@@ -175,6 +181,79 @@ namespace alibaba.Controllers
                 // 异常处理，记录错误日志等
                 return StatusCode(500, e.Message);
             }
+        }
+
+        /// <summary>
+        /// 因为阿里云没有提供 智能语音服务的 C#的SDK，只能是写openAPI进行访问
+        /// 链接：https://help.aliyun.com/document_detail/113251.html?spm=a2c4g.72153.0.0.597c3bfbEZJhST
+        /// </summary>
+        /// <returns></returns>
+        public async Task<TokenInfo> GetIntelligentSpeechTokenAsync()
+        {
+            // 所有请求参数
+            var queryParamsDict = new Dictionary<string, string>
+            {
+                ["AccessKeyId"] = _aiTokenOptions.AccountAccessKey,
+                ["Action"] = "CreateToken",
+                ["Version"] = "2019-02-28",
+                ["Format"] = "JSON",
+                ["RegionId"] = _aiTokenOptions.Region,
+                ["Timestamp"] = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
+                ["SignatureMethod"] = "HMAC-SHA1",
+                ["SignatureVersion"] = "1.0",
+                ["SignatureNonce"] = Guid.NewGuid().ToString(),
+            };
+
+            // 1.构造规范化的请求字符串
+            var queryString = string.Join("&",
+                queryParamsDict
+                    .OrderBy(it => it.Key)
+                    .Select(it => $"{WebUtility.UrlEncode(it.Key)}={WebUtility.UrlEncode(it.Value)}")
+            );
+
+            // 2.构造签名字符串
+            var stringToSign = $"GET&{WebUtility.UrlEncode("/")}&{WebUtility.UrlEncode(queryString)}";
+
+            // 3.计算签名
+            string signBase64;
+            using (var hash = new HMACSHA1(Encoding.UTF8.GetBytes(_aiTokenOptions.AccountSecretKey + "&")))
+            {
+                signBase64 = Convert.ToBase64String(hash.ComputeHash(Encoding.UTF8.GetBytes(stringToSign)));
+                hash.Clear();
+            }
+            var signature = WebUtility.UrlEncode(signBase64);
+
+            // 4.将签名加入到第1步获取的请求字符串
+            var queryStringWithSign = $"Signature={signature}&{queryString}";
+
+            // 5.发送HTTP GET请求,获取token。
+            var request = (HttpWebRequest)WebRequest.Create($"https://nls-meta.cn-shanghai.aliyuncs.com/?{queryStringWithSign}");
+            request.Method = "GET";
+            request.Accept = "application/json";
+
+            using var response = request.GetResponse();
+            var statusCode = ((HttpWebResponse)response).StatusCode;
+
+            if (statusCode != HttpStatusCode.OK)
+            {
+                var errorMessage = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                throw new Exception($"获取智能语音令牌失败。状态码：{statusCode}，错误信息：{errorMessage}");
+            }
+
+            var result = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
+            var tokenObj = JObject.Parse(result)["Token"] as JObject;
+            var token = tokenObj["Id"].ToObject<string>();
+            var expireTime = DateTimeOffset.FromUnixTimeSeconds(tokenObj["ExpireTime"].ToObject<long>()).UtcDateTime;
+
+            return new TokenInfo()
+            {
+                accessKeyId = _aiTokenOptions.AccountSecretKey,
+                accessKeySecret = _aiTokenOptions.AccountSecretKey,
+                token = token,
+                expireTime = expireTime
+            };
+
         }
     }
 }
