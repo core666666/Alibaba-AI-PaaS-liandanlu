@@ -19,5 +19,13 @@
         public string apptoken { get; set; }
 
         public string ModelId { get; set; }
+
+        //ChatMemoToken
+        public string ChatMemoToken { get; set; }
+        //corpId
+        public string ChatMemoCorpId { get; set; }
+
+        //appId
+        public string ChatMemoAppId { get; set; }
     }
 }

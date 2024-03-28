@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ChatMemo（Qwen-Plus）</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div id="app">
+        <header class="header">
+            <h1 class="page-title">ChatMemo</h1>
+        </header>
+        <div class="button-container">
+            <button id="marquee-button" @click="navigateTo('index.html')">Go to 炼丹炉</button>
+        </div>
+
+        <div class="chat-container">
+            <div v-for="(message, index) in messages" :key="index"
+                :class="{'message-right': message.type === 'question', 'message-left': message.type === 'answer' || message.type === 'current'}">
+                <div class="message-content">{{ message.text }}</div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div id="box">{{ translatedText }}</div>
+            <input type="text" v-model="newQuestion" @keyup.enter="sendQuestion" placeholder="Type a question..."
+                ref="questionInput">
+            <button @click="sendQuestion" :disabled="sending" :class="{ 'button-disabled': sending }">Send</button>
+            <span v-show="sending" class="replying-label"></span>
+
+            <div v-if="recordershowModal" class="recordershowModal">收声中...</div>
+            <button @click="toggleRecording">
+                {{ isRecording ? '结束收声' : '按下收声' }}
+              </button>
+            <button @click="playRecord" :class="{'disabled': !hasRecording}" :disabled="!hasRecording">播放录音-{{recordingDuration}}s</button>
+        </div>
+    </div>
+
+    <script src="vue@2.js"></script>
+    <script src="ChatMemoapp.js"></script>
+    <script src="recorder.js"></script>
+</body>
+</html>

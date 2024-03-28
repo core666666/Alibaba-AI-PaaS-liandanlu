@@ -10,6 +10,12 @@
 
 <body>
     <div id="app">
+        <header class="header">
+            <h1 class="page-title">炼丹炉</h1>
+        </header>
+        <div class="button-container">
+            <button id="marquee-button" @click="navigateTo('ChatMemoindex.html')">Go to ChatMemo</button>
+        </div>
 
         <div class="modal" v-if="showModal">
             <div class="modal-content">
@@ -23,9 +29,9 @@
         <div class="model-selection-container">
             <label for="modelSelection">选择模型：</label>
             <select id="modelSelection" v-model="selectedModel">
-                <option value="model-qwen7b" selected>公积金专员</option>
-                <option value="model-cb12345">Qwen-7B-Chat</option>
-                <option value="model-mpt7b1">MPT-7B</option>
+                <option value="model-1" selected>公积金专员</option>
+                <option value="model-2">Qwen-7B-Chat</option>
+                <option value="model-3">MPT-7B</option>
             </select>
             <del><label for="contextSize">上下文长度：</label></del>
             <input type="number" id="contextSize" v-model.number="contextLength" min="1" max="10" value="1" readonly>
@@ -45,14 +51,12 @@
             <button @click="sendQuestion" :disabled="sending" :class="{ 'button-disabled': sending }">Send</button>
             <span v-show="sending" class="replying-label"></span>
 
-            <!-- <button @click="startRecord">开启</button>
-            <button @click="endRecord">停止</button> -->
             <div v-if="recordershowModal" class="recordershowModal">收声中...</div>
             <button @click="toggleRecording">
                 {{ isRecording ? '结束收声' : '按下收声' }}
-              </button>
-            <button @click="playRecord" :class="{'disabled': !hasRecording}" :disabled="!hasRecording">播放录音-{{recordingDuration}}s</button>
-            <!-- <button @click="transRecord">上传翻译</button> -->
+            </button>
+            <button @click="playRecord" :class="{'disabled': !hasRecording}"
+                :disabled="!hasRecording">播放录音-{{recordingDuration}}s</button>
         </div>
     </div>
 

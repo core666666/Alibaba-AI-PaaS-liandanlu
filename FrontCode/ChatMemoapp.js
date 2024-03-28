@@ -3,10 +3,8 @@ new Vue({
     data: {
         newQuestion: '',
         messages: [],
-        selectedModel: 'model-id', // 默认选中 Qwen-7B-Chat 模型
-        contextLength: 0, // 设置默认上下文长度为5
+        selectedModel: 'chatMemo', //
         sending: false, // 添加一个标志，以禁用Send按钮
-        showModal: false,
         recordershowModal: false,
         recorder: null,
         translatedText: '',
@@ -20,57 +18,98 @@ new Vue({
 
             this.sending = true;
 
-            // let historicalQuestions = this.messages.filter(message => message.type === 'question');
-            // if (this.contextLength > 0 && historicalQuestions.length > this.contextLength) {
-            //     historicalQuestions = historicalQuestions.slice(-this.contextLength);
-            // }
-
-            // let prompt = "" +
-            //     historicalQuestions.map(message => message.text).join('；') +
-            //     "，" + this.newQuestion;
-
             let prompt = this.newQuestion;
 
-            // Add the question to the messages array
             this.messages.push({ text: this.newQuestion, type: 'question' });
 
-            // Send the question to the API
-            fetch('https://test.cn/api/v1.0/aiPaaS/ai/g', {
+            fetch('https://test.cn/api/v1.0/aiPaaS/ai/gmemo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    module: "module",
-                    modelId: this.selectedModel,//"model-id",
+                    modelId: this.selectedModel,
                     prompt: prompt,
-                    userId: "1"
+                    chatType: this.selectedModel === "chatMemo" ? 1 : 0,
                 })
             })
                 .then(response => {
-                    if (response.status === 500) {
-                        this.sending = false;
-                        throw new Error('模型不可用，请切换其他模型'); 
-                    }
-                    return response.json(); // 继续处理正常情况
+                    if (response.status === 500) throw new Error('模型不可用，请切换其他模型');
+                    return response.body.getReader();
                 })
-                .then(data => {
-                    //this.messages.push({ text: this.newQuestion, type: 'question' });
-                    this.simulateStreamingResponse(data.result.content);
+                .then(reader => {
+                    return new ReadableStream({
+                        start(controller) {
+                            function push() {
+                                reader.read().then(({ done, value }) => {
+                                    if (done) {
+                                        controller.close();
+                                        return;
+                                    }
+                                    controller.enqueue(value);
+                                    push();
+                                });
+                            }
+                            push();
+                        }
+                    });
+                })
+                .then(stream => {
+                    const reader = stream.getReader();
+                    let buffer = '';
+                    const self = this;
+
+                    return new Promise((resolve, reject) => {
+                        function processText({ done, value }) {
+                            if (done) {
+                                resolve();
+                                return;
+                            }
+
+                            buffer += new TextDecoder("utf-8").decode(value);
+                            const lines = buffer.split('\n');
+
+                            for (let i = 0; i < lines.length - 1; i++) {
+                                const line = lines[i].trim();
+                                if (line.startsWith('{') && line.endsWith('}')) {
+                                    const data = JSON.parse(line);
+                                    if (data.isFinished) {
+                                        self.messages[self.messages.length - 1].text += data.data;
+                                        self.$nextTick(() => {
+                                            self.scrollToBottom();
+                                        });
+                                    } else {
+                                        if (!self.messages.length || self.messages[self.messages.length - 1].type !== 'answer') {
+                                            self.messages.push({ text: data.data, type: 'answer' });
+                                        } else {
+                                            self.messages[self.messages.length - 1].text += data.data;
+                                        }
+                                        self.$nextTick(() => {
+                                            self.scrollToBottom();
+                                        });
+                                    }
+                                }
+                            }
+
+                            buffer = lines[lines.length - 1];
+
+                            return reader.read().then(processText);
+                        }
+                        reader.read().then(processText);
+                    });
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert(error.message);
                 })
                 .finally(() => {
-                    //this.sending = false; 
-                    this.newQuestion = ''; 
+                    this.sending = false;
+                    this.newQuestion = '';
                     this.$nextTick(() => {
-                        this.scrollToBottom(); // 滚动到底部
+                        this.scrollToBottom();
                     });
                 });
 
-            // Clear the question input field
             this.newQuestion = '';
             this.$nextTick(() => {
                 this.scrollToBottom();
@@ -83,34 +122,16 @@ new Vue({
             const chatContainer = this.$el.querySelector(".chat-container");
             chatContainer.scrollTop = chatContainer.scrollHeight;
         },
-        simulateStreamingResponse(content) {
-            let index = 1;
-            // 在messages数组中添加一个新的答案对象，并保存其位置
-            const answerIndex = this.messages.push({ text: '', type: 'answer' }) - 1;
-
-            const interval = setInterval(() => {
-                if (index < content.length) {
-                    // 逐步揭示内容直到整个答案被展示出来
-                    const text = content.slice(0, index++);
-                    this.messages[answerIndex].text = text;
-                } else {
-                    clearInterval(interval);
-                    this.sending = false;
-                    this.$nextTick(this.scrollToBottom); // 确保滚动到最新的消息
-                }
-            }, 100); // 这个时间间隔控制了打字效果的快慢
-        },
         closeModal() {
-            this.showModal = false; 
             this.$nextTick(() => {
                 this.$refs.questionInput.focus();
             });
         },
         disableContext() {
-            this.contextLength = 1; 
+            this.contextLength = 1;
             this.closeModal();
             this.$nextTick(() => {
-                this.$refs.questionInput.focus(); 
+                this.$refs.questionInput.focus();
             });
         },
         startRecord() {
@@ -122,22 +143,20 @@ new Vue({
             this.recordershowModal = true;
             this.recorder.start();
             this.isRecording = true;
-            this.hasRecording = false; 
+            this.hasRecording = false;
             this.recordingDuration = 0;
             console.log('录音中...');
-            //alert('录音中...');
-            this.startTime = Date.now(); 
+            this.startTime = Date.now();
         },
         endRecord() {
             if (this.recorder) {
                 this.recorder.stop();
                 this.isRecording = false;
-                this.hasRecording = true; 
-                this.recordingDuration = Math.round((Date.now() - this.startTime) / 1000); 
+                this.hasRecording = true;
+                this.recordingDuration = Math.round((Date.now() - this.startTime) / 1000);
                 console.log(`录音结束，本次录音时间${this.recordingDuration}秒`);
                 this.recordershowModal = false;
-                this.transRecord(); 
-                //alert(`录音结束，本次录音时间${this.recordingDuration}秒`);
+                this.transRecord();
             }
         },
         playRecord() {
@@ -145,7 +164,6 @@ new Vue({
                 this.recorder.play();
             } else {
                 console.log('没有录音可以播放');
-                //alert('没有录音可以播放');
             }
         },
         transRecord() {
@@ -161,17 +179,16 @@ new Vue({
                 })
                     .then(response => response.json())
                     .then(data => {
-                        let translatedTextStr = data.translatedText; 
+                        let translatedTextStr = data.translatedText;
                         let translatedTextObj;
 
                         try {
-                            translatedTextObj = JSON.parse(translatedTextStr); 
+                            translatedTextObj = JSON.parse(translatedTextStr);
                         } catch (error) {
                             console.error('Parsing error:', error);
                         }
 
                         if (translatedTextObj) {
-                            //alert(translatedTextObj.result); 
                             if (translatedTextObj.status === 20000000) {
                                 this.newQuestion = translatedTextObj.result;
                             } else {
@@ -199,7 +216,5 @@ new Vue({
         }
     },
     created() {
-        // 页面加载完成时，可以决定是否立即显示模态框
-        this.showModal = false;
     }
 });

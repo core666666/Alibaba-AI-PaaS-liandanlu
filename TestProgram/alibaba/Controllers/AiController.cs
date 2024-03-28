@@ -11,6 +11,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Tea;
@@ -82,7 +83,7 @@ namespace alibaba.Controllers
         }
 
         [NonAction]
-        public static AlibabaCloud.SDK.Dingtalkai_paa_s_1_0.Client AIPaasCreateClient()
+        public AlibabaCloud.SDK.Dingtalkai_paa_s_1_0.Client AIPaasCreateClient()
         {
             AlibabaCloud.OpenApiClient.Models.Config config = new AlibabaCloud.OpenApiClient.Models.Config();
             config.Protocol = "https";
@@ -90,14 +91,15 @@ namespace alibaba.Controllers
             return new AlibabaCloud.SDK.Dingtalkai_paa_s_1_0.Client(config);
         }
 
-        /// <summary>
-        /// 问答
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         [HttpPost("g")]
-        public async Task<Dictionary<string, object>> generate(LiandanluExclusiveModelRequest args)
+        public async Task<Dictionary<string, object>> generate(ChatModel args)
         {
+            //chatMemo
+            //if (args.chatType == 1)
+            //{
+            //    ChatMemoGenerate(args);
+            //}
+
             if (DateTime.UtcNow > AccessTokenExpiry || string.IsNullOrEmpty(AccessToken))
             {
                 getAccessToken();
@@ -115,6 +117,7 @@ namespace alibaba.Controllers
             try
             {
                 var response = await client.LiandanluExclusiveModelWithOptionsAsync(liandanluExclusiveModelRequest, liandanluExclusiveModelHeaders, new AlibabaCloud.TeaUtil.Models.RuntimeOptions());
+
                 return response.Body.Result;
             }
             catch (TeaException err)
@@ -144,10 +147,81 @@ namespace alibaba.Controllers
         }
 
         /// <summary>
-        /// 语音转文本
+        /// ChatMemo
+        /// https://solu-ai.dingtalk.com/#/apps
         /// </summary>
-        /// <param name="file"></param>
+        /// <param name="args"></param>
         /// <returns></returns>
+        [HttpPost("gmemo")]
+        public async Task ChatMemoGenerate(ChatModel args)
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+
+            var requestUrl = $"https://solu-ai.dingtalk.com/api/chat/memo/stream/query?query={args.Prompt}&token={_aiTokenOptions.ChatMemoToken}&corpId={_aiTokenOptions.ChatMemoCorpId}&appId={_aiTokenOptions.ChatMemoAppId}";
+
+            var response = await httpClient.GetAsync(requestUrl, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            Response.ContentType = "application/json";
+            Response.Headers["Cache-Control"] = "no-cache";
+            Response.Headers["Transfer-Encoding"] = "chunked";
+
+            using (var reader = new StreamReader(stream))
+            {
+                string line;
+                while ((line = await reader.ReadLineAsync()) != null)
+                {
+                    if (line.StartsWith("data:"))
+                    {
+                        line = line.Substring(5);
+                    }
+                    var data = Encoding.UTF8.GetBytes(line + Environment.NewLine);
+                    var chunkHeader = Encoding.ASCII.GetBytes($"{data.Length:X}\r\n");
+                    await Response.Body.WriteAsync(chunkHeader, 0, chunkHeader.Length);
+                    await Response.Body.WriteAsync(data, 0, data.Length);
+                    await Response.Body.WriteAsync(Encoding.ASCII.GetBytes("\r\n"), 0, 2);
+                    await Response.Body.FlushAsync();
+                }
+            }
+            await Response.Body.WriteAsync(Encoding.ASCII.GetBytes("0\r\n\r\n"), 0, 5);
+        }
+
+        [HttpPost("gmemo_bak")]
+        public async IAsyncEnumerable<ChatMemoResponse> ChatMemoGenerate_bak(ChatModel args)
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+
+            var requestUrl = $"https://solu-ai.dingtalk.com/api/chat/memo/stream/query?query={args.Prompt}&token={_aiTokenOptions.ChatMemoToken}&corpId={_aiTokenOptions.ChatMemoCorpId}&appId={_aiTokenOptions.ChatMemoAppId}";
+
+            var response = await httpClient.GetAsync(requestUrl, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            using var reader = new StreamReader(responseStream);
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+
+            while (!reader.EndOfStream)
+            {
+                var line = await reader.ReadLineAsync();
+                if (!string.IsNullOrEmpty(line))
+                {
+                    if (line.StartsWith("data:"))
+                    {
+                        line = line.Substring(5);
+                    }
+                    var chatMemoResponse = JsonSerializer.Deserialize<ChatMemoResponse>(line, jsonOptions);
+                    yield return chatMemoResponse;
+                    if (chatMemoResponse.isFinished) break;
+                }
+            }
+        }
+
         [HttpPost("speech")]
         public async Task<IActionResult> recorder(IFormFile file)
         {
@@ -161,10 +235,12 @@ namespace alibaba.Controllers
             using var memoryStream = new MemoryStream();
             await file.CopyToAsync(memoryStream);
 
+            // 创建HttpClient并配置Headers
             var client = _httpClientFactory.CreateClient();
             var request = new HttpRequestMessage(HttpMethod.Post, $"http://nls-gateway-cn-shanghai.aliyuncs.com/stream/v1/asr?appkey={appKey}");
             request.Headers.Add("X-NLS-Token", token);
 
+            // 将内存流作为请求内容
             request.Content = new ByteArrayContent(memoryStream.ToArray());
             request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
 
@@ -174,6 +250,7 @@ namespace alibaba.Controllers
                 response.EnsureSuccessStatusCode();
                 var jsonResponse = await response.Content.ReadAsStringAsync();
 
+                // TODO: 解析jsonResponse以提取所需信息，例如翻译文本
                 return Ok(new { translatedText = jsonResponse });
             }
             catch (HttpRequestException e)
