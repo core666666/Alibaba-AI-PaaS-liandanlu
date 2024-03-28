@@ -1,5 +1,5 @@
 # Alibaba-AI-PaaS-liandanlu
-阿里巴巴通义千问AI PaaS大模型（Qwen-7B-Chat）、炼丹炉大模型、MPT-7B模型接入、模型训练、VUE页面部署、后端部署、公司对接ai、对接阿里云通义千问、简易搭建通义千问大模型聊天功能
+阿里巴巴通义千问AI PaaS大模型、炼丹炉大模型、ChatMemo接入、模型训练、VUE页面部署、后端部署、对接阿里云通义千问、语音转文本、简易搭建通义千问大模型聊天功能（支持PC端、移动端）
 
 ### 功能清单
 | 序号 | 功能 | 进度 |
@@ -35,7 +35,7 @@
 [![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvGza.png)](https://img.tg/image/OyvlLx)
 
 #### 5.聊天首页（阿里云AI PaaS目前不支持连续对话，由程序模拟的连续对话）
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvSlN.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/28/Og28Jt.png)](https://img.tg/image/OyvlLx)
 
 #### 6.连续聊天，提问
 [![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvdZL.png)](https://img.tg/image/OyvlLx)
@@ -54,6 +54,9 @@
 #### 10.对接语音转文本-使用
 [![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyG37a.png)](https://img.tg/image/OyvlLx)
 
+#### 11.ChatMemo接入
+[ChatMemo链接](https://solu-ai.dingtalk.com/#/apps)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/28/Og2Xlx.png)](https://img.tg/image/OyvlLx)
 
 #### 其他小功能1 海创网职位获取
 ###### 代码位置 jishianquan-haichuangController
