@@ -10,14 +10,11 @@
 
 <body>
     <div id="app">
-        <header class="header">
-            <h1 class="page-title">ChatMemo</h1>
-        </header>
         <div class="button-container">
             <button id="marquee-button" @click="navigateTo('index.html')">Go to 炼丹炉</button>
         </div>
 
-        <div class="chat-container">
+        <div class="chat-container" data-page="2">
             <div v-for="(message, index) in messages" :key="index"
                 :class="{'message-right': message.type === 'question', 'message-left': message.type === 'answer' || message.type === 'current'}">
                 <div class="message-content">{{ message.text }}</div>

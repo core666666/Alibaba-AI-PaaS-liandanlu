@@ -10,9 +10,6 @@
 
 <body>
     <div id="app">
-        <header class="header">
-            <h1 class="page-title">炼丹炉</h1>
-        </header>
         <div class="button-container">
             <button id="marquee-button" @click="navigateTo('ChatMemoindex.html')">Go to ChatMemo</button>
         </div>
@@ -37,7 +34,7 @@
             <input type="number" id="contextSize" v-model.number="contextLength" min="1" max="10" value="1" readonly>
         </div>
 
-        <div class="chat-container">
+        <div class="chat-container" data-page="1">
             <div v-for="(message, index) in messages" :key="index"
                 :class="{'message-right': message.type === 'question', 'message-left': message.type === 'answer' || message.type === 'current'}">
                 <div class="message-content">{{ message.text }}</div>
