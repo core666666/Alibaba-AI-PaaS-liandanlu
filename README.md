@@ -2,9 +2,9 @@
 ##### 阿里巴巴通义千问AI PaaS大模型、炼丹炉大模型、ChatMemo接入、模型训练、VUE页面部署、后端部署、对接阿里云通义千问、语音转文本、简易搭建通义千问大模型聊天功能（支持PC端、移动端）
 
 ## PC端
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/29/OgXWwF.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/29/OgXWwF.png)](https://ooo.0x0.ooo/2024/03/29/OgXWwF.png)
 ## 移动端
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/29/OgXTAI.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/29/OgXTAI.png)](https://ooo.0x0.ooo/2024/03/29/OgXTAI.png)
 
 
 ### 功能清单
@@ -26,28 +26,28 @@
 
 #### 1.创建AI PaaS应用
 [AI PaaS链接](https://open-dev.dingtalk.com/?spm=dd_developers.homepage.0.0.4ef84a978dtaWB#/)
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvYMX.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvYMX.png)](https://ooo.0x0.ooo/2024/02/28/OyvYMX.png)
 
 #### 2.复制AppKey、AppSecret
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvlLx.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvlLx.png)](https://ooo.0x0.ooo/2024/02/28/OyvlLx.png)
 
 #### 2.开通炼丹炉大模型权限
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/Oyvsci.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/Oyvsci.png)](https://ooo.0x0.ooo/2024/02/28/Oyvsci.png)
 
 #### 3.上传知识库进行训练
 [炼丹炉大模型开发链接](https://open.dingtalk.com/document/ai-dev/basic-concepts)
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvcBC.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvcBC.png)](https://ooo.0x0.ooo/2024/02/28/OyvcBC.png)
 
 #### 4.选择并创建模型
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvGza.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/02/28/OyvGza.png)](https://ooo.0x0.ooo/2024/02/28/OyvGza.png)
 
 #### 5.对接语音转文本-创建项目（新账户有3个月的免费试用期）
 [智能语音交互链接](https://help.aliyun.com/document_detail/72138.html?spm=a2c4g.119258.0.0.35d91dd8RD7r8V)
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyGCHS.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyGCHS.png)](https://ooo.0x0.ooo/2024/03/05/OyGCHS.png)
 
 #### 6.对接语音转文本-获得AccessToken（Token有效期为24h）
 [获取Token链接](https://help.aliyun.com/document_detail/450514.html?spm=a2c4g.113251.0.0.63b24d82mz7R6r)
-[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyGwXN.png)](https://img.tg/image/OyvlLx)
+[![OyvlLx.th.png](https://ooo.0x0.ooo/2024/03/05/OyGwXN.png)](https://ooo.0x0.ooo/2024/03/05/OyGwXN.png)
 
 #### 7.ChatMemo接入
 [ChatMemo链接](https://solu-ai.dingtalk.com/#/apps)
