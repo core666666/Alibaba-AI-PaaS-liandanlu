@@ -95,11 +95,11 @@ input[type="text"] {
 }
 
 .chat-container[data-page="1"]::after {
-  content: "炼丹炉";
+  content: "LianDanLu";
 }
 
 .chat-container[data-page="2"]::after {
-  content: "ChatMemo";  
+  content: "Chat Memo";  
 }
 
 /* 消息气泡样式 */
