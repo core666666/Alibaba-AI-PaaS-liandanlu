@@ -18,7 +18,7 @@ new Vue({
 
             this.sending = true;
 
-            let prompt = this.newQuestion;
+            let prompt = this.newQuestion.replace(/\\n/g, '\n');
 
             this.messages.push({ text: this.newQuestion, type: 'question' });
 
@@ -34,7 +34,7 @@ new Vue({
                 })
             })
                 .then(response => {
-                    if (response.status === 500) throw new Error('模型不可用，请切换其他模型');
+                    if (response.status === 500) throw new Error('模型不可用,请切换其他模型');
                     return response.body.getReader();
                 })
                 .then(reader => {
@@ -74,15 +74,19 @@ new Vue({
                                 if (line.startsWith('{') && line.endsWith('}')) {
                                     const data = JSON.parse(line);
                                     if (data.isFinished) {
-                                        self.messages[self.messages.length - 1].text += data.data;
+                                        if (self.messages.length === 0 || self.messages[self.messages.length - 1].type !== 'answer') {
+                                            self.messages.push({ text: data.data.replace(/\\n/g, '\n'), type: 'answer' });
+                                        } else {
+                                            self.messages[self.messages.length - 1].text += data.data.replace(/\\n/g, '\n');
+                                        }
                                         self.$nextTick(() => {
                                             self.scrollToBottom();
                                         });
                                     } else {
                                         if (!self.messages.length || self.messages[self.messages.length - 1].type !== 'answer') {
-                                            self.messages.push({ text: data.data, type: 'answer' });
+                                            self.messages.push({ text: data.data.replace(/\\n/g, '\n'), type: 'answer' });
                                         } else {
-                                            self.messages[self.messages.length - 1].text += data.data;
+                                            self.messages[self.messages.length - 1].text += data.data.replace(/\\n/g, '\n');
                                         }
                                         self.$nextTick(() => {
                                             self.scrollToBottom();
