@@ -75,18 +75,18 @@ new Vue({
                                     const data = JSON.parse(line);
                                     if (data.isFinished) {
                                         if (self.messages.length === 0 || self.messages[self.messages.length - 1].type !== 'answer') {
-                                            self.messages.push({ text: data.data.replace(/\\n/g, '\n'), type: 'answer' });
+                                            self.messages.push({ text: data.data?.replace(/\\n/g, '\n') || '', type: 'answer' });
                                         } else {
-                                            self.messages[self.messages.length - 1].text += data.data.replace(/\\n/g, '\n');
+                                            self.messages[self.messages.length - 1].text += data.data?.replace(/\\n/g, '\n') || '';
                                         }
                                         self.$nextTick(() => {
                                             self.scrollToBottom();
                                         });
                                     } else {
                                         if (!self.messages.length || self.messages[self.messages.length - 1].type !== 'answer') {
-                                            self.messages.push({ text: data.data.replace(/\\n/g, '\n'), type: 'answer' });
+                                            self.messages.push({ text: data.data?.replace(/\\n/g, '\n') || '', type: 'answer' });
                                         } else {
-                                            self.messages[self.messages.length - 1].text += data.data.replace(/\\n/g, '\n');
+                                            self.messages[self.messages.length - 1].text += data.data?.replace(/\\n/g, '\n') || '';
                                         }
                                         self.$nextTick(() => {
                                             self.scrollToBottom();
@@ -105,6 +105,7 @@ new Vue({
                 .catch(error => {
                     console.error('Error:', error);
                     alert(error.message);
+                    this.sending = false;
                 })
                 .finally(() => {
                     this.sending = false;
